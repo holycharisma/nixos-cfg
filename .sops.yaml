@@ -1,0 +1,15 @@
+keys:
+  - &admin age154npk6weq882za33tfzdhkqv8jsy6lxlhs6uf2uxn0p03a8xcp3s67m9yz
+  - &homer age1v6wagsy2h2aw8nl3vpvkf8rwenv70sxuamqprtj8yma337agzahqpq330a
+  - &marge age1c3xrqxvvpwnzyud4npctztf5mfs34qms4enwaqhtyshhfemr4gmsqszhk9
+creation_rules:
+  - path_regex: machines/homer/secrets/sops.yaml
+    key_groups:
+    - age:
+      - *admin
+      - *homer
+  - path_regex: machines/marge/secrets/sops.yaml
+    key_groups:
+    - age:
+      - *admin
+      - *marge
