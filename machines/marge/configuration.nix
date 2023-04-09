@@ -38,6 +38,7 @@ in {
     helix
     wget
     curl
+    magic-wormhole
     git
     jq
   ];
@@ -49,9 +50,19 @@ in {
 
   services.caddy = {
     enable = true;
+
     virtualHosts."vault.holycharisma.com" = {
       extraConfig = ''
         reverse_proxy http://homer:8222
+      '';
+    };  
+
+    virtualHosts."cloud.holycharisma.com" = {
+      extraConfig = ''
+        redir /.well-known/carddav /remote.php/dav 301
+        redir /.well-known/caldav /remote.php/dav 301
+
+        reverse_proxy http://homer:8080
       '';
     };  
 

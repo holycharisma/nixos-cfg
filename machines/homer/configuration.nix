@@ -25,6 +25,10 @@ in {
   sops.age.keyFile = "/var/lib/age/keys.txt"; # plz install me manually
 
   sops.secrets.ts_auth = {};
+  sops.secrets.nextcloud_password = {
+    owner = config.users.users.nextcloud.name;
+    group = config.users.users.nextcloud.group;
+  };
   sops.secrets.vaultwarden_env = {
     owner = config.users.users.vaultwarden.name;
   };
@@ -37,6 +41,7 @@ in {
     helix
     tailscale
     jq
+    magic-wormhole
 
     # some stuff for qnap-v-station
     lxqt.lxqt-policykit
@@ -92,6 +97,22 @@ in {
         ROCKET_LOG = "critical";
       };
   };
+
+  services.nextcloud = {
+    enable = true;
+    package = pkgs.nextcloud26;
+    extraAppsEnable = true;
+    extraApps = with pkgs.nextcloud26Packages.apps; {
+      inherit calendar mail contacts tasks notes deck;
+    };
+    hostName = "homer";
+    config.overwriteProtocol = "https"; # we will be accessing this over public https
+    config.extraTrustedDomains = [ "cloud.holycharisma.com" ];
+    config.trustedProxies = [ "cloud.holycharisma.com" ];
+    config.adminpassFile = config.sops.secrets.nextcloud_password.path;
+  };
+
+  services.nginx.virtualHosts."homer".listen = [ { addr = "0.0.0.0"; port = 8080; } ];
 
   services.openssh.enable = true;
   services.tailscale.enable = true;
