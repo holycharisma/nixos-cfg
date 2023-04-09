@@ -51,12 +51,38 @@ in {
   services.caddy = {
     enable = true;
 
+    # services are thin tailscale proxies
+    # self hosted on qemu homelab
+
+    # vaultwarden proxy
     virtualHosts."vault.holycharisma.com" = {
       extraConfig = ''
         reverse_proxy http://homer:8222
       '';
     };  
 
+    # minio api
+    virtualHosts."files.holycharisma.com" = {
+      extraConfig = ''
+        reverse_proxy http://homer:9000
+      '';
+    };  
+
+    # expose a minio bucket as domain
+    virtualHosts."cloud.files.holycharisma.com" = {
+      extraConfig = ''
+        reverse_proxy http://homer:9000
+      '';
+    };  
+
+    # minio web console login
+    virtualHosts."web.files.holycharisma.com" = {
+      extraConfig = ''
+        reverse_proxy http://homer:9001
+      '';
+    };
+
+    # nextcloud proxy
     virtualHosts."cloud.holycharisma.com" = {
       extraConfig = ''
         redir /.well-known/carddav /remote.php/dav 301

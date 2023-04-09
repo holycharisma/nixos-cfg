@@ -31,6 +31,11 @@ in {
   };
   sops.secrets.vaultwarden_env = {
     owner = config.users.users.vaultwarden.name;
+    group = config.users.users.vaultwarden.group;
+  };
+  sops.secrets.minio_env = {
+    owner = config.users.users.minio.name;
+    group = config.users.users.minio.group;
   };
 
 
@@ -96,6 +101,11 @@ in {
         ROCKET_PORT = 8222;
         ROCKET_LOG = "critical";
       };
+  };
+
+  services.minio = {
+    enable = true;
+    rootCredentialsFile = config.sops.secrets.minio_env.path;
   };
 
   services.nextcloud = {
