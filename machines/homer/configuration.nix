@@ -25,6 +25,7 @@ in {
   sops.age.keyFile = "/var/lib/age/keys.txt"; # plz install me manually
 
   sops.secrets.ts_auth = {};
+  sops.secrets.postgres_init_sql = {};
   sops.secrets.nextcloud_password = {
     owner = config.users.users.nextcloud.name;
     group = config.users.users.nextcloud.group;
@@ -47,6 +48,8 @@ in {
     tailscale
     jq
     magic-wormhole
+    tmux
+    fish
 
     # some stuff for qnap-v-station
     lxqt.lxqt-policykit
@@ -123,6 +126,24 @@ in {
   };
 
   services.nginx.virtualHosts."homer".listen = [ { addr = "0.0.0.0"; port = 8080; } ];
+
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_14;
+    enableTCPIP = true;
+    authentication = pkgs.lib.mkOverride 14 ''
+      local all all trust
+      host all all 127.0.0.1/32 trust
+      host all all ::1/128 trust
+    '';
+    # initialScript = pkgs.writeText "backend-initScript" ''
+    #  CREATE ROLE $POSTGRES_USER_NAME WITH LOGIN PASSWORD '$POSTGRES_USER_PASSWORD' CREATEDB;
+    #  CREATE DATABASE hcc;
+    #  GRANT ALL PRIVILEGES ON DATABASE hcc TO $POSTGRES_USER_NAME;
+    # '';
+    initialScript = config.sops.secrets.postgres_init_sql.path;
+  };
+  
 
   services.openssh.enable = true;
   services.tailscale.enable = true;

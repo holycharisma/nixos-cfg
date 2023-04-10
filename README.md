@@ -7,12 +7,20 @@ home services:
 
 - home rust band webapp
 - vaultwarden
-
-things to do:
-
 - nextcloud
 
-things that can be added:
+some keys needs provisioned to the servers:
 
-- fastmail SMTP / webDAV
-  - [reddit discussion about webdav/nixOS](https://www.reddit.com/r/NixOS/comments/b5p6f7/comment/ejhf93n/?utm_source=share&utm_medium=web2x&context=3)
+- /var/lib/age/keys.txt
+
+some manual setup for hcc:
+
+- no packaging for clubhouse stuff
+- clone repos to /var/lib/holycharisma
+- build, run db migrations
+- no systemd service for holycharisma server yet
+  - currently just using a tmux session
+
+release frontend assets go on caddy proxy server
+
+- get webassembly/js assets into /var/lib/holycharisma/www/hcc

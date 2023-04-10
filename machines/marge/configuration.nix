@@ -51,38 +51,32 @@ in {
   services.caddy = {
     enable = true;
 
-    # services are thin tailscale proxies
-    # self hosted on qemu homelab
+    virtualHosts."holycharisma.com" = {
+      extraConfig = ''
+        root * /var/lib/holycharisma/www
 
-    # vaultwarden proxy
+        encode zstd gzip
+
+        @is-file file {
+          try_files {path} {path}/index.html {path}index.html
+        }
+
+        handle @is-file {
+          file_server
+        }
+
+        handle {
+          reverse_proxy http://homer:7777
+        }
+      '';
+    };
+
     virtualHosts."vault.holycharisma.com" = {
       extraConfig = ''
         reverse_proxy http://homer:8222
       '';
-    };  
-
-    # minio api
-    virtualHosts."files.holycharisma.com" = {
-      extraConfig = ''
-        reverse_proxy http://homer:9000
-      '';
-    };  
-
-    # expose a minio bucket as domain
-    virtualHosts."cloud.files.holycharisma.com" = {
-      extraConfig = ''
-        reverse_proxy http://homer:9000
-      '';
-    };  
-
-    # minio web console login
-    virtualHosts."web.files.holycharisma.com" = {
-      extraConfig = ''
-        reverse_proxy http://homer:9001
-      '';
     };
 
-    # nextcloud proxy
     virtualHosts."cloud.holycharisma.com" = {
       extraConfig = ''
         redir /.well-known/carddav /remote.php/dav 301
@@ -91,6 +85,24 @@ in {
         reverse_proxy http://homer:8080
       '';
     };  
+
+    virtualHosts."files.holycharisma.com" = {
+      extraConfig = ''
+        reverse_proxy http://homer:9000
+      '';
+    };  
+
+    virtualHosts."cloud.files.holycharisma.com" = {
+      extraConfig = ''
+        reverse_proxy http://homer:9000
+      '';
+    };  
+
+    virtualHosts."web.files.holycharisma.com" = {
+      extraConfig = ''
+        reverse_proxy http://homer:9001
+      '';
+    };
 
   };
 
