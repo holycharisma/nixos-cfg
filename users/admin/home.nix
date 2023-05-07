@@ -12,8 +12,6 @@
       userName = "holycharisma";
       userEmail = "admin@holycharisma.com";
       aliases = {
-        prettylog = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(r) %C(bold blue)<%an>%Cr
-eset' --abbrev-commit --date=relative";
         root = "rev-parse --show-toplevel";
       };
       extraConfig = {
